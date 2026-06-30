@@ -1,0 +1,115 @@
+# Earth Sentinel — Full stack
+# Inclui infra (postgres, redis, minio) + backend Go + frontend Node.js.
+#
+# Para desenvolvimento local (só infra, processos fora do Docker):
+#   docker compose -f docker-compose.dev.yml up -d
+#
+# Para subir tudo em Docker:
+#   docker compose up --build
+
+services:
+
+  # ── Infra ──────────────────────────────────────────────────────────────────
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER:     earthsentinel
+      POSTGRES_PASSWORD: earthsentinel
+      POSTGRES_DB:       earthsentinel
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U earthsentinel"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER:     minio-access-key
+      MINIO_ROOT_PASSWORD: minio-secret-key
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ── Aplicação ──────────────────────────────────────────────────────────────
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      DATABASE_URL:   postgres://earthsentinel:earthsentinel@postgres:5432/earthsentinel
+      REDIS_URL:      redis://redis:6379
+      MINIO_ENDPOINT: minio:9000
+      MINIO_KEY:      minio-access-key
+      MINIO_SECRET:   minio-secret-key
+      MINIO_BUCKET:   earth-sentinel
+      PORT:           "8080"
+    env_file:
+      - path: .env
+        required: false
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    environment:
+      GO_BACKEND_URL: http://backend:8080
+      PORT:           "3000"
+    ports:
+      - "3000:3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:

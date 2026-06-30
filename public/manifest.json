@@ -1,0 +1,21 @@
+{
+  "name": "Earth Sentinel",
+  "short_name": "Sentinel",
+  "description": "Monitoramento global de riscos extremos em tempo real",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7fdfd",
+  "theme_color": "#00575c",
+  "orientation": "any",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "weather"],
+  "screenshots": []
+}

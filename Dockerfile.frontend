@@ -1,0 +1,12 @@
+FROM node:18-alpine
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+COPY server.js .
+COPY public/ ./public/
+
+EXPOSE 3000
+ENV GO_BACKEND_URL=http://backend:8080
+CMD ["node", "server.js"]

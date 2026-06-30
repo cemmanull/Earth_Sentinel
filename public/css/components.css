@@ -1,0 +1,360 @@
+/* components.css — Estilos das primitivas UI reutilizáveis (M2 Fase 5.5).
+   Todo o conteúdo dentro de @layer components para garantir cascade determinística.
+   Usa exclusivamente tokens de base.css (--sp-*, --fs-*, --sev-*, --surf-*, --bd-*,
+   --tx-*, --r-*, --t, --z-toast). Cor de tipo via var(--type-color, var(--tx-2)). */
+
+@layer components {
+
+/* ══════════════════════════════════════════════════════════════════════════
+   TYPE-BADGE  <type-badge type="earthquake">
+   .tb — container; .tb__icon — emoji; .tb__label — texto
+══════════════════════════════════════════════════════════════════════════ */
+
+type-badge {
+  display: inline-flex;
+  align-items: center;
+}
+
+.tb {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  padding: 2px var(--sp-2);
+  border-radius: var(--r-full);
+  background: color-mix(in srgb, var(--type-color, var(--tx-2)) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--type-color, var(--tx-2)) 28%, transparent);
+  max-width: 100%;
+}
+
+.tb__icon {
+  font-size: var(--fs-sm);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.tb__label {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--type-color, var(--tx-2));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.02em;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SEVERITY-INDICATOR  <severity-indicator value="3">
+   .si — container; .si__dot — ponto; .si__dot--filled — preenchido
+══════════════════════════════════════════════════════════════════════════ */
+
+severity-indicator {
+  display: inline-flex;
+  align-items: center;
+}
+
+.si {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.si__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--bd-2);
+  flex-shrink: 0;
+  transition: background var(--t);
+}
+
+.si__dot--filled {
+  /* background is set inline via style="background:var(--sev-N)" */
+  opacity: 1;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   METRIC-CHIP  <metric-chip label="KP" value="3.2" level="warn">
+   .mc — container; .mc__label — rótulo; .mc__value — valor
+   Modificadores de nível: .mc__value--ok | --warn | --alert
+══════════════════════════════════════════════════════════════════════════ */
+
+metric-chip {
+  display: inline-flex;
+  align-items: center;
+}
+
+.mc {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--sp-1);
+  padding: 3px var(--sp-2);
+  background: var(--surf-2);
+  border: 1px solid var(--bd-2);
+  border-radius: var(--r-sm);
+}
+
+.mc__label {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--tx-3);
+  flex-shrink: 0;
+}
+
+.mc__value {
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--tx-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.mc__value--ok    { color: var(--ok); }
+.mc__value--warn  { color: var(--warn); }
+.mc__value--alert { color: var(--crit); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CONTENT-CARD  <content-card>
+   .card — raiz (o elemento custom); internos: .card__header, .card__body,
+   .card__footer, .card__title, .card__badge, .card__desc, .card__meta
+══════════════════════════════════════════════════════════════════════════ */
+
+content-card,
+.card {
+  display: block;
+  background: var(--surf-2);
+  border: 1px solid var(--bd-1);
+  border-radius: var(--r-md);
+  padding: var(--sp-3) var(--sp-4);
+  cursor: pointer;
+  transition: background var(--t), border-color var(--t), box-shadow var(--t);
+  border-left: 2px solid var(--type-color, var(--bd-2));
+}
+
+content-card:hover,
+.card:hover {
+  background: var(--surf-3);
+  border-color: var(--bd-2);
+  box-shadow: 0 1px 3px rgba(2, 2, 2, 0.08);
+}
+
+content-card:focus-visible,
+.card:focus-visible {
+  outline: 2px solid var(--ac);
+  outline-offset: 2px;
+}
+
+.card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+  min-width: 0;
+}
+
+.card__title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--fs-md);
+  font-weight: 500;
+  color: var(--tx-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.3;
+}
+
+.card__badge {
+  flex-shrink: 0;
+  font-size: var(--fs-xs);
+  color: var(--ac);
+  font-variant-numeric: tabular-nums;
+  background: var(--ac-bg);
+  border: 1px solid var(--ac-bd);
+  border-radius: var(--r-full);
+  padding: 1px var(--sp-2);
+  white-space: nowrap;
+}
+
+.card__body {
+  margin-bottom: var(--sp-2);
+}
+
+.card__desc {
+  font-size: var(--fs-sm);
+  color: var(--tx-2);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+
+.card__meta {
+  font-size: var(--fs-xs);
+  color: var(--tx-3);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   EMPTY-STATE  <empty-state message="…" action-label="…" icon="📭">
+   .es — container; .es__icon — emoji; .es__message — texto; .es__action — botão
+══════════════════════════════════════════════════════════════════════════ */
+
+empty-state {
+  display: block;
+}
+
+.es {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-7) var(--sp-4);
+  text-align: center;
+}
+
+.es__icon {
+  font-size: 2rem;
+  line-height: 1;
+  opacity: 0.55;
+}
+
+.es__message {
+  font-size: var(--fs-sm);
+  color: var(--tx-3);
+  line-height: 1.5;
+  max-width: 240px;
+}
+
+.es__action {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--ac);
+  background: var(--ac-bg);
+  border: 1px solid var(--ac-bd);
+  border-radius: var(--r-md);
+  padding: var(--sp-2) var(--sp-4);
+  cursor: pointer;
+  transition: background var(--t), opacity var(--t);
+}
+
+.es__action:hover { background: color-mix(in srgb, var(--ac) 16%, transparent); }
+.es__action:active { opacity: 0.8; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   APP-TOAST  <app-toast>
+   .toast-container — raiz fixada; .toast — item individual;
+   .toast__message — texto; .toast__controls — grupo de botões;
+   .toast__action — CTA opcional; .toast__close — fechar
+══════════════════════════════════════════════════════════════════════════ */
+
+app-toast,
+.toast-container {
+  position: fixed;
+  bottom: var(--sp-5);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  pointer-events: none;
+  width: max-content;
+  max-width: min(480px, calc(100vw - var(--sp-6)));
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surf-1);
+  border: 1px solid var(--bd-2);
+  border-radius: var(--r-lg);
+  box-shadow: 0 1px 3px rgba(2, 2, 2, 0.08);
+  pointer-events: all;
+  width: 100%;
+  animation: toast-in var(--t) ease forwards;
+}
+
+.toast--leaving {
+  animation: toast-out var(--t) ease forwards;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);    }
+}
+
+@keyframes toast-out {
+  from { opacity: 1; transform: translateY(0)   scale(1);    }
+  to   { opacity: 0; transform: translateY(8px) scale(0.97); }
+}
+
+.toast__message {
+  font-size: var(--fs-sm);
+  color: var(--tx-1);
+  flex: 1;
+  line-height: 1.4;
+}
+
+.toast__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex-shrink: 0;
+}
+
+.toast__action {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--ac);
+  background: var(--ac-bg);
+  border: 1px solid var(--ac-bd);
+  border-radius: var(--r-sm);
+  padding: 3px var(--sp-2);
+  cursor: pointer;
+  transition: background var(--t);
+  white-space: nowrap;
+}
+
+.toast__action:hover { background: color-mix(in srgb, var(--ac) 16%, transparent); }
+
+.toast__close {
+  font-size: var(--fs-xs);
+  color: var(--tx-3);
+  background: none;
+  border: none;
+  padding: 3px var(--sp-1);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: color var(--t), background var(--t);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.toast__close:hover { color: var(--tx-1); background: var(--surf-3); }
+
+/* Reduced motion — desabilita animações de entrada/saída do toast */
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .toast--leaving {
+    animation: none;
+  }
+}
+
+} /* end @layer components */

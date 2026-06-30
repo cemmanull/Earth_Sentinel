@@ -1,0 +1,31 @@
+@layer themes {
+/* extreme-events.css — overrides visuais específicos do tema extreme-events.
+   A maior parte do estilo vem de panels.css (reuso de classes).
+   Este arquivo contém apenas ajustes de tema. */
+
+/* Botão de refresh com animação de giro ativa */
+.eep-refresh-btn.spinning {
+  animation: spin 0.8s linear infinite;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Reduced motion — spinner parado; opacity 0.6 + pointer-events seguem
+   indicando a atualização em andamento */
+@media (prefers-reduced-motion: reduce) {
+  .eep-refresh-btn.spinning {
+    animation: none;
+  }
+}
+
+/* Destaque de severidade crítica na métrica de risco local */
+.eep-risk-level.risk-level-critical { color: var(--crit); }
+.eep-risk-level.risk-level-high     { color: var(--hi); }
+.eep-risk-level.risk-level-moderate { color: var(--warn); }
+.eep-risk-level.risk-level-low      { color: var(--tx-2); }
+}

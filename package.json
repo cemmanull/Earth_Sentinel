@@ -1,0 +1,18 @@
+{
+  "name": "earth-sentinel",
+  "version": "0.1.0",
+  "description": "Earth Sentinel — global extreme risk monitoring PWA",
+  "type": "module",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start":        "node server.js",
+    "test":         "node --test tests/unit/*.test.js",
+    "test:watch":   "node --test --watch tests/unit/*.test.js",
+    "test:verbose": "node --test --reporter=spec tests/unit/*.test.js",
+    "test:int":     "node --test tests/integration/*.test.js",
+    "test:all":     "node --test tests/unit/*.test.js tests/integration/*.test.js"
+  },
+  "dependencies": {
+    "express": "^4.18.4"
+  }
+}

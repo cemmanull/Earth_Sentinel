@@ -1,0 +1,236 @@
+/* base.css — ordem das camadas, tokens de design, reset e estilos base.
+   A declaração @layer abaixo é a ÚNICA fonte da ordem da cascata. Os demais
+   arquivos apenas adicionam regras a camadas já ordenadas aqui:
+     layout.css → layout · panels/loader/risk-panel/components → components ·
+     themes/<id>.css → themes.
+   ⚠️ Nenhuma regra pode ficar FORA de uma camada (CSS sem layer vence todas). */
+
+/* ── Webfonts Aegis Sentinel (self-hosted, subset latin) ──
+   @font-face não participa de @layer — declarar aqui não afeta a cascata. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/inter-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/inter-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Space Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/space-grotesk-700.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/fonts/jetbrains-mono-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/fonts/ibm-plex-mono-500.woff2') format('woff2');
+}
+
+@layer reset, tokens, base, layout, components, themes, utilities;
+
+@layer tokens {
+  :root {
+    color-scheme: light;
+    font-family: var(--font-ui);
+
+    /* ── Famílias tipográficas (DESIGN.md — Typography Rules) ── */
+    --font-ui:      'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-display: 'Space Grotesk', var(--font-ui);
+    --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+    --font-label:   'IBM Plex Mono', ui-monospace, monospace;
+
+    /* ── Superfícies ── */
+    --bg:       #f7fdfd;  /* background */
+    --surf-1:   #ffffff;  /* readability layer (branco do map-overlay) */
+    --surf-2:   #f2f8f8;  /* surface */
+    --surf-3:   #e0e8e8;  /* muted */
+    --surf-4:   #e0e8e8;
+    --overlay-bg: rgba(255,255,255,0.92);  /* map-overlay (DESIGN.md) — translúcido sobre o mapa */
+
+    /* ── Bordas ── */
+    --bd-1: rgba(2,2,2,0.04);
+    --bd-2: #e8ecec;             /* border default */
+    --bd-3: #e0e8e8;             /* borda forte = muted */
+
+    /* ── Texto ── */
+    --tx-1: #020202;             /* foreground */
+    --tx-2: rgba(2,2,2,0.62);
+    --tx-3: rgba(2,2,2,0.40);
+
+    /* ── Acento ── */
+    --ac:    #00575c;            /* primary */
+    --on-ac: #fcfcfc;            /* texto sobre --ac (on-primary) */
+    --ac-bg: rgba(0,87,92,0.08);
+    --ac-bd: rgba(0,87,92,0.28);
+    --focus: #0d9297;            /* focus ring (DESIGN.md border.active) */
+
+    /* ── Semântico ── */
+    --ok:   #1c989d;             /* success */
+    --warn: #a77e39;             /* warning */
+    --hi:   #fa0013;             /* telemetry-4 */
+    --crit: #7b131e;             /* danger */
+    --info: #528ac4;             /* telemetry-2 */
+
+    /* ── Severidade 1–5 (escala de ContentItem.severity) ──
+       Auditoria AA (W4): sev-2..5 ≥ 3:1 sobre a surface do próprio esquema
+       (claro #f2f8f8: 3.38/3.44/3.85/10.01 · escuro #101919: 4.93/6.95/4.32/4.01).
+       sev-1 é neutro por design (sinal por ausência) — fora da exigência 3:1.
+       Aliasing intencional: --sev-3 == --warn e --sev-5 == --crit nos dois esquemas
+       (semântica Aegis: âmbar = warning, vermelho = critical). */
+    --sev-1: rgba(2,2,2,0.08);   /* neutro */
+    --sev-2: #528ac4;
+    --sev-3: #a77e39;
+    --sev-4: #fa0013;
+    --sev-5: #7b131e;
+
+    /* ── Espaçamento ── */
+    --sp-1: 4px;
+    --sp-2: 8px;
+    --sp-3: 12px;
+    --sp-4: 16px;
+    --sp-5: 20px;
+    --sp-6: 24px;
+    --sp-7: 32px;
+    --sp-8: 40px;
+
+    /* ── Tipografia ── */
+    --fs-xs: 0.6875rem;
+    --fs-sm: 0.75rem;
+    --fs-md: 0.875rem;
+    --fs-lg: 1.05rem;
+    --fs-xl: 1.4rem;
+
+    /* ── Z-index (escala espelhando os valores em uso; adoção progressiva) ── */
+    --z-base:    5;     /* mapa, hints */
+    --z-raised:  20;    /* painéis laterais */
+    --z-header:  25;    /* header sticky */
+    --z-popover: 60;    /* popovers do header */
+    --z-detail:  90;    /* detail-panel flutuante */
+    --z-modal:   200;   /* modais */
+    --z-toast:   300;   /* toasts */
+    --z-loader:  9999;  /* tela de carregamento */
+
+    /* ── Raios (escala DESIGN.md: 4/6/8/12) ── */
+    --r-xs:   4px;
+    --r-sm:   6px;
+    --r-md:   8px;
+    --r-lg:  12px;
+    --r-full: 9999px;
+
+    /* ── Transição ── */
+    --t: 140ms ease;
+
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ── Esquema escuro (DESIGN.md — Dark Mode Variant) ──
+     Token swap apenas: redefine neutros/superfícies e cores que perdem
+     contraste no escuro. Acento, telemetria e success/info são compartilhados. */
+  [data-color-scheme="dark"] {
+    color-scheme: dark;
+    /* superfícies */
+    --bg: #0a1010; --surf-1: #101919; --surf-2: #101919; --surf-3: #1a2626; --surf-4: #1a2626;
+    --overlay-bg: rgba(16,25,25,0.92);  /* map-overlay no escuro = surf-1 translúcido */
+    /* bordas */
+    --bd-1: rgba(242,248,248,0.05); --bd-2: #223030; --bd-3: #1a2626;
+    /* texto */
+    --tx-1: #f2f8f8; --tx-2: rgba(242,248,248,0.62); --tx-3: rgba(242,248,248,0.40);
+    /* acento: primary #00575c é ilegível no escuro — teal focus assume */
+    --ac: #0d9297; --ac-bg: rgba(13,146,151,0.10); --ac-bd: rgba(13,146,151,0.32);
+    /* semânticos clareados (DESIGN.md dark) */
+    --warn: #c79a52; --crit: #d4434f;
+    /* severidade segue os semânticos */
+    --sev-1: rgba(242,248,248,0.10); --sev-3: #c79a52; --sev-5: #d4434f;
+  }
+}
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button {
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+
+  img,
+  canvas,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+@layer base {
+  body {
+    background: var(--bg);
+    color: var(--tx-1);
+    font-size: 0.875rem;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+    border-radius: var(--r-xs);
+  }
+
+  ::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--bd-2);
+    border-radius: var(--r-full);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--bd-3);
+  }
+}

@@ -1,0 +1,77 @@
+@layer components {
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  z-index: 9999;
+}
+
+.loader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0;
+}
+
+.loader-mark {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.loader-logo {
+  width: 100%;
+  height: 100%;
+}
+
+.loader-title {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--tx-1);
+  margin-bottom: 6px;
+}
+
+.loader-sub {
+  font-size: 0.8125rem;
+  color: var(--tx-3);
+  margin-bottom: 28px;
+}
+
+.loader-track {
+  width: 180px;
+  height: 2px;
+  background: var(--surf-3);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+
+.loader-bar {
+  height: 100%;
+  background: var(--ac);
+  border-radius: var(--r-full);
+  animation: loader-sweep 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes loader-sweep {
+  0%   { width: 0%;   margin-left: 0%; }
+  50%  { width: 60%;  margin-left: 20%; }
+  100% { width: 0%;   margin-left: 100%; }
+}
+
+/* Reduced motion — sweep vira barra estática centralizada (estado do frame 50%) */
+@media (prefers-reduced-motion: reduce) {
+  .loader-bar {
+    animation: none;
+    width: 60%;
+    margin-left: 20%;
+  }
+}
+}

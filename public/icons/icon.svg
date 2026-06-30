@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+
+  <!-- background -->
+  <rect width="512" height="512" rx="96" fill="#020813"/>
+
+  <!-- outer orbital ring -->
+  <circle
+    cx="256"
+    cy="256"
+    r="180"
+    fill="none"
+    stroke="#00575c"
+    stroke-width="5"
+    opacity="0.6"
+  />
+
+  <!-- signal ring -->
+  <circle
+    cx="256"
+    cy="256"
+    r="132"
+    fill="none"
+    stroke="#154f84"
+    stroke-width="3"
+    stroke-dasharray="10 8"
+  />
+
+  <!-- inner core -->
+  <circle
+    cx="256"
+    cy="256"
+    r="86"
+    fill="#0b1a2f"
+  />
+
+  <!-- energy pulse -->
+  <circle
+    cx="256"
+    cy="256"
+    r="62"
+    fill="#154f84"
+    opacity="0.12"
+  />
+
+  <!-- central sensor -->
+  <circle
+    cx="256"
+    cy="256"
+    r="14"
+    fill="#0d9297"
+  />
+
+  <!-- directional grid -->
+  <line x1="256" y1="188" x2="256" y2="324"
+        stroke="#00575c"
+        stroke-width="5"
+        stroke-linecap="round"/>
+
+  <line x1="188" y1="256" x2="324" y2="256"
+        stroke="#00575c"
+        stroke-width="5"
+        stroke-linecap="round"/>
+
+  <!-- diagonal telemetry -->
+  <line x1="210" y1="210" x2="302" y2="302"
+        stroke="#154f84"
+        stroke-width="4"
+        opacity="0.9"
+        stroke-linecap="round"/>
+
+  <line x1="302" y1="210" x2="210" y2="302"
+        stroke="#154f84"
+        stroke-width="4"
+        opacity="0.9"
+        stroke-linecap="round"/>
+
+  <!-- outer detection nodes -->
+  <circle cx="256" cy="126" r="8" fill="#5e3a00"/>
+  <circle cx="386" cy="256" r="8" fill="#5e3a00"/>
+  <circle cx="256" cy="386" r="8" fill="#5e3a00"/>
+  <circle cx="126" cy="256" r="8" fill="#5e3a00"/>
+
+</svg>

@@ -1,0 +1,267 @@
+openapi: 3.0.0
+info:
+  title: The Earth Observatory Natural Event Tracker ([EONET](https://eonet.gsfc.nasa.gov/what-is-eonet))
+  version: 3.0.0
+servers:
+  - url: https://eonet.gsfc.nasa.gov/api/v3
+  - url: http://eonet.gsfc.nasa.gov/api/v3
+
+paths:
+  /categories/{categoryId}: # ../categories
+    get:
+      summary: Returns a json object of categories.
+      description: ""
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          description: Filter the events by the Category.
+          schema:
+            type: string
+        - name: source
+          in: query
+          required: false
+          description: Filter the topically-constrained events by the Source. Multiple sources can be included in the parameter, comma separated, operates as a boolean OR.
+          schema:
+            type : string
+        - name: status
+          in: query
+          required: false
+          description: Events that have ended are assigned a closed date and the existence of that date will allow you to filter for only-open or only-closed events. Omitting the status parameter will return only the currently open events.
+          schema:
+            type: string
+            default: open
+            enum:
+            - open
+            - closed
+        - name: limit
+          in: query
+          required: false
+          description: Limits the number of events returned.
+          schema:
+            type: integer
+            format: int64
+        - name: days
+          in: query
+          required: false
+          description: Limit the number of prior days (including today) from which events will be returned. 
+          schema:
+            type: integer
+            format: int64
+        - name: start
+          in: query
+          required: false
+          description: Select a starting date for the events. To be used together with end parameter.
+          schema:
+            type: string
+        - name: end
+          in: query
+          required: false
+          description: Select an ending date for the events. To be used together with start parameter for defining a range.
+          schema:
+            type: string
+          
+      responses:
+        200: #status code
+          description: A JSON object upon successful operation
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/CategoryResponse'
+  /events:
+    get:
+      summary: Return a json object of events.
+      description: ""
+      parameters:
+        - name: source
+          in: query
+          required: false
+          description: Filter the returned events by the Source. Multiple sources can be included in the parameter, comma separated, operates as a boolean OR. 
+          schema:
+            type: string
+        - name: category
+          in: query
+          required: false
+          description: Filter the returned events by the category. Multiple sources can be included in the parameter, comma separated, operates as a boolean OR.
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          description: Events that have ended are assigned a closed date and the existence of that date will allow you to filter for only-open or only-closed events. Omitting the status parameter will return only the currently open events (default). Using “all“ will list open and closed values. 
+          schema:
+            type: string
+            default: open
+            enum:
+            - open
+            - closed
+            - all
+        - name: limit
+          in: query
+          required: false
+          description: Limits the number of events returned.
+          schema:
+            type: integer
+            format: int64
+        - name: days
+          in: query
+          required: false
+          description: Limit the number of prior days (including today) from which events will be returned.
+          schema:
+            type: integer
+            format: int64
+        - name: start
+          in: query
+          required: false
+          description: Select a starting dates for the events in a YYYY-MM-DD format.
+          schema:
+            type: string
+        - name: end
+          in: query
+          required: false
+          description: Select an ending date for the events in YYYY-MM-DD format.
+          schema:
+            type: string
+        - name: magID
+          in: query
+          required: false
+          description: ""
+          schema:
+            type: string
+            enum:
+            - mag_kts
+            - mms
+            - sq_NM
+        - name: magMin
+          in: query
+          required: false
+          description: ""
+          schema:
+            type: number
+        - name: magMax
+          in: query
+          required: false
+          description: ""
+          schema:
+            type: number
+        - name: bbox
+          in: query
+          required: false
+          description: Query using a bounding box for all events with datapoints that fall within. This uses two pairs of coordinates, the upper left hand corner (lon,lat) followed by the lower right hand corner (lon,lat). 
+          schema:
+            type: string
+            
+      responses:
+        200: # status code
+          description: A JSON object upon successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CategoryResponse'
+            
+components:
+  schemas:
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        link:
+          type: string
+    Source:
+      type: object
+      properties:
+        id:
+          type: string
+          description: unique id of source type
+        title:
+          type: string
+          description: title of this source
+        source:
+          type: string
+          description: homepage URL for this source
+        link:
+          type: string
+          description: The full link to the API endpoint for this specific source, which is the same as the Events API endpoint only filtered to return only events from this source.
+    Geometry:
+      type: object
+      description: One or more event geometries are the pairing of a specific date/time with a location.
+      properties:
+        magnitudeValue:
+          type: string
+          description: Information regarding the event magnitude is displayed if available.
+        magnitudeUnit:
+          type: string
+          description: Information regarding the event magnitude unit is displayed if available.
+        date:
+          type: string
+          description: The date/time will most likely be 00:00Z unless the source provided a particular time.
+        type:
+          type: string
+          enum:
+          - Point
+          - Polygon
+        coordinates:
+          type: array
+          minItems: 2
+          items:
+            type: number
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique id for this event.
+        title:
+          type: string
+          description: The title of the event.
+        description:
+          type: string
+          description: Optional longer description of the event. Most likely only a sentence or two.
+        link:
+          type: string
+          description: The full link to the API endpoint for this specific event.
+        closed:
+          type: string
+          description: An event is deemed “closed” when it has ended. The closed field will include a date/time when the event has ended. Depending upon the nature of the event, the closed value may or may not accurately represent the absolute ending of the event. If the event is open, this will show “null”.
+        categories:
+          type: array
+          description: One or more categories assigned to the event. 
+          items: 
+            oneOf:
+            - $ref: '#/components/schemas/Category'
+        sources:
+          type: array
+          description: One or more sources that refer to more information about the event. 
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/Source'
+        geometry:
+          type: array
+          description: One or more event geometries are the pairing of a specific date/time with a location. Information regarding the event magnitude, if available, is displayed here.
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/Geometry'
+            
+    CategoryResponse:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        link:
+          type: string
+        events:
+          type: array
+          description: An array of events.
+          items:
+            oneOf:
+            - $ref: '#/components/schemas/Event'
+                
+ 
+        
